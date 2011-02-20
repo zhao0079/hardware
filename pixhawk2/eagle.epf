@@ -1,2 +1,20 @@
 [Eagle]
 Version="05 11 00"
+Platform="Mac OS X"
+Serial="6E039A1D15-LSR-WLM-1EL"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+UsedLibrary="/Volumes/Data/Users/msmith/Documents/eagle/pixhawk2/pixhawk2.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="37 155 1757 1251"
+State=2
+Number=0
+
+[Desktop]
+Screen="2560 1600"
+Window="Win_1"
