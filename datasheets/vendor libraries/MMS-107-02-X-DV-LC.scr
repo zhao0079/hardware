@@ -1,0 +1,106 @@
+#  Library Script
+# 
+#  PCB Matrix
+SET WIRE_BEND 2;
+Grid mm;
+SET COLOR_LAYER 29 3
+SET COLOR_LAYER 31 11
+SET COLOR_LAYER 39 13
+SET COLOR_LAYER 40 5
+SET COLOR_LAYER 51 6
+SET COLOR_LAYER 52 6
+SET FILL_LAYER 29 9
+SET FILL_LAYER 31 1
+SET FILL_LAYER 39 1
+SET FILL_LAYER 40 1
+SET FILL_LAYER 51 1
+SET FILL_LAYER 52 1
+Layer 1 Top;
+Layer 16 Bottom;
+Layer 17 Pads;
+Layer 18 Vias;
+Layer 19 Unrouted;
+Layer 20 Dimension;
+Layer 21 tPlace;
+Layer 22 bPlace;
+Layer 23 tOrigins;
+Layer 24 bOrigins;
+Layer 25 tNames;
+Layer 26 bNames;
+Layer 27 tValues;
+Layer 28 bValues;
+Layer 29 tStop;
+Layer 30 bStop;
+Layer 31 tCream;
+Layer 32 bCream;
+Layer 33 tFinish;
+Layer 34 bFinish;
+Layer 35 tGlue;
+Layer 36 bGlue;
+Layer 37 tTest;
+Layer 38 bTest;
+Layer 39 tKeepout;
+Layer 40 bKeepout;
+Layer 41 tRestrict;
+Layer 42 bRestrict;
+Layer 43 vRestrict;
+Layer 44 Drills;
+Layer 45 Holes;
+Layer 46 Milling;
+Layer 47 Measures;
+Layer 48 Document;
+Layer 49 Reference;
+Layer 51 tDocu;
+Layer 52 bDocu;
+Description '<b>PCB Matrix Packages</b><p>\n';
+
+Edit MMS-107-02-X-DV-LC.pac;
+Description '2mm Surface Mount Box Connector Strip Assembly';
+Layer 1;
+SMD '1' 2.16 1.02 -0 R90 (6 -2.65499997138977);
+SMD '2' 2.16 1.02 -0 R90 (6 2.65499997138977);
+SMD '3' 2.16 1.02 -0 R90 (4 -2.65499997138977);
+SMD '4' 2.16 1.02 -0 R90 (4 2.65499997138977);
+SMD '5' 2.16 1.02 -0 R90 (2 -2.65499997138977);
+SMD '6' 2.16 1.02 -0 R90 (2 2.65499997138977);
+SMD '7' 2.16 1.02 -0 R90 (0 -2.65499997138977);
+SMD '8' 2.16 1.02 -0 R90 (0 2.65499997138977);
+SMD '9' 2.16 1.02 -0 R90 (-2 -2.65499997138977);
+SMD '10' 2.16 1.02 -0 R90 (-2 2.65499997138977);
+SMD '11' 2.16 1.02 -0 R90 (-4 -2.65499997138977);
+SMD '12' 2.16 1.02 -0 R90 (-4 2.65499997138977);
+SMD '13' 2.16 1.02 -0 R90 (-6 -2.65499997138977);
+SMD '14' 2.16 1.02 -0 R90 (-6 2.65499997138977);
+Change Drill 0.86;
+HOLE 0.86 (6 -1);
+HOLE 0.86 (6 1);
+HOLE 0.86 (4 -1);
+HOLE 0.86 (4 1);
+HOLE 0.86 (2 -1);
+HOLE 0.86 (2 1);
+HOLE 0.86 (0 -1);
+HOLE 0.86 (0 1);
+HOLE 0.86 (-2 -1);
+HOLE 0.86 (-2 1);
+HOLE 0.86 (-4 -1);
+HOLE 0.86 (-4 1);
+HOLE 0.86 (-6 -1);
+HOLE 0.86 (-6 1);
+Change Drill 1.19;
+HOLE 1.19 (5 0);
+HOLE 1.19 (-5 0);
+Layer 21;
+Change Size 0.7;
+Change Ratio 5;
+Text '>NAME' R0 (2.7557 -4.647);
+Layer 51;
+Change Size 0.7;
+Change Ratio 5;
+Text '>NAME' R0 (2.7462 -4.6762);
+Wire 0.254 (-7.25 -2) (-7.25 2) (7.25 2) (7.25 -2)\
+        (-7.25 -2);
+Layer 21;
+Wire 0.254 (-7.78 2.5) (-6.87 2.5) (-6.87 3.989) (6.87 3.989)\
+        (6.87 2.5) (7.78 2.5) (7.78 -2.5) (6.85 -2.5)\
+        (6.85 -3.989) (-6.87 -3.989) (-6.87 -2.5) (-7.78 -2.5)\
+        (-7.78 2.5);
