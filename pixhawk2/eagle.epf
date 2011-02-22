@@ -7,13 +7,14 @@ Desktop="Desktop"
 
 [Globals]
 AutoSaveProject=1
+UsedLibrary="/Volumes/Data/Users/msmith/Documents/eagle/pixhawk2/pixhawk2.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="276 147 875 546"
+Loc="23 81 1743 1177"
 State=2
 Number=0
 
 [Desktop]
-Screen="2048 1152"
+Screen="2560 1600"
 Window="Win_1"
