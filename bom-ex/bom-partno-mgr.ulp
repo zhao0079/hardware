@@ -1,0 +1,918 @@
+//////////////////////////////////////////////////////////////////////////////
+//
+// PART NUMBER ATTRIBUTE MANAGER
+//
+// Copyright (C) 2010, Robert E. Starr (http://www.bobstarr.net)
+//
+// REVISION HISTORY:
+//
+// v1.01 - 04/01/2010  Initial Release
+//
+// v1.02 - 04/06/2010  Added auto-load database support from global attribute.
+//                     If global attr 'DATABASE' exists we use the value
+//                     as the file pathname and load the database at startup.
+//
+// v1.03 - 04/07/2010  Added BOM attribute edit flag options to allow editing
+//                     the EXCLUDE/INCLUDE attribute flags.
+//
+// v1.04 - 04/14/2010  Minor UI changes and added Apply button to exit and
+//                     execute script to apply all changes.
+//                     Added part package column in list view.
+//
+// v1.05 - 04/15/2010  Added DNP logic to display with part id.
+//
+//
+// v1.06 - 04/21/2010  Fixed bug causing multi-gate parts on different sheets
+//                     to appear multiple times in the parts view list.
+//
+// v1.07 - 04/23/2010  Added logic to include addtional devices that
+//                     have no package but need to be included in the BOM
+//                     for ordering purposes (e.g. jumper blocks, etc).
+//
+// v1.08 - 05/03/2010  Added new dlgSelectionChanged() logic to part no
+//                     pick list dialog. Part number is updated when the
+//                     user clicks a different item. Double clicking accepts
+//                     the current item selected and closes the dialog.
+//
+// v1.09 - 10/13/2010  Added support for DNP attribute manipulation in the
+//                     pick list dialog.
+//
+//////////////////////////////////////////////////////////////////////////////
+//
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND,
+// EXPRESSED OR IMPLIED. IF YOU DON'T LIKE IT, DON'T USE IT!
+//
+//////////////////////////////////////////////////////////////////////////////
+
+#usage "<b>Part Number Manager</b> - v1.09<p>"
+       "This ULP allows browsing and modifying PARTNO attributes "
+       "for all parts in a drawing. It also allows importing part "
+       "number text files to add part number attributes to all "
+       "parts specified in the imported data."
+       "<p>"
+       "<author>http://www.bobstarr.net</author>";
+
+string HelpTextEN =
+  "<b>PART NUMBER MANAGER</b>\n"
+  "<p>\n"
+  "This program is designed to work in conjuction with <b>bom-ex.ulp</b> to provide\n"
+  "a complete Bill of Materials and part number database management system. The \n"
+  "new <b>bom-ex</b> utility uses attributes to store part number and other data that\n"
+  "controls new BOM listing and reporting features. This utility allows you to globally\n"
+  "assign and manager part numbers to drawings via scripts.\n"
+  "<p>\n"
+  "This new management system stores all manufacturer part numbers for each part as\n"
+  "a <b>PARTNO</b> attributes. The BOM program uses these part number attributes to look up\n"
+  "supplier, and other order related information, from a part number database file\n"
+  "that is loaded into the BOM viewer.\n"
+  "<p>\n"
+  "This part number manager is provided as a means to quickly assign or modify part\n"
+  "number data globally via scripts. Users can all also modify attributes individually\n"
+  "with the ATTRIBUTE command or via the accompanying <b>attrib-add.ulp</b> utility.\n"
+  "<p>\n"
+  "<b>IMPORTING PART NUMBER DATA</b>\n"
+  "<p>\n"
+  "You can import part number data from a TAB formatted text file if desired.\n"
+  "This feature is useful for transferring BOM data from a spreadsheet or application\n"
+  "that supports exporting of tabbed text output files. Most spreadsheet applications\n"
+  "provide facilities to output TAB text format files and will allow you to transfer\n"
+  "existing external BOM data into your Eagle schematic.\n"
+  "<p>\n"
+  "<pre>\n"
+  "  Part Name           Part Number\n"
+  "  R4                  MCR10EZHJ000\n"
+  "  R21                 ERA-6YEB101V\n"
+  "  R12                 ERA-6YEB391V\n"
+  "  \"R3, R20\"           ERJ-6ENF1001V\n"
+  "  R13                 ERJ-6ENF1241V\n"
+  "  R1                  ERJ-6ENF2211V\n"
+  "  \"R5, R7, R10, R25\"  ERJ-6ENF4751V\n"
+  "</pre>\n"
+  "<p>\n"
+  "The first line contains the 'Part Name' and 'Part Number' fields and is the\n"
+  "header record line. The names in these columns don't really matter, but the\n"
+  "header and all other data records must have TAB delimiters for the field delimiters.\n"
+  "<p>\n"
+  "Note the 'Part Name' fields may contain multiple part name designators, but\n"
+  "each part id must be delimited by a comma. If multiple part name designators\n"
+  "are contained on a line, it should have quotes around the entire part id\n"
+  "names string (default Excel format for tabbed text).\n"
+  "<p>\n"
+  "<b>SAVING THE ATTRIBUTES SCRIPT</b>\n"
+  "<p>\n"
+  "Once all part number attributes have been edited or imported, you must\n"
+  "apply these globally via a script. Use the <b>Save</b> to save the current\n"
+  "part number attributes data to a script file. After the script file has been\n"
+  "saved, you can execute this script from the schematic editor to apply all the\n"
+  "part number changes to your drawing. Always review these changes with the\n"
+  "<b>bom-ex</b> utility afterwards to verify all part numbers were assigned correctly\n"
+  "and save your drawings with the new part number attribute additions.\n"
+  ;
+
+//////////////////////////////////////////////////////////////////////////////
+// Global Data Items
+
+string strVersion = "1.09";
+string fileName;
+
+int IsModified = 0;
+int nPartCount;
+
+numeric string PartRef[];
+numeric string PartSheet[];
+numeric string PartName[];
+numeric string PartVal[];
+numeric string PartNum[];
+numeric string PartPkg[];
+numeric string PartBOM[];
+int PartDNP[];
+
+int nSelected = 0;
+
+numeric string ListView[];
+
+// Part Database Globals
+
+string Database[];
+string DatabaseFields[];
+
+int DatabaseRecCount;
+string DatabaseFilePath;
+
+char DatabaseSeparator = '\t';
+
+string ConfigFilePath;
+string ConfigFileName = "bom-ex.cfg"; // use same config filename as bom-ex
+
+string nullkey   = "*";
+string dnpSuffix = "(DNP)";
+
+//////////////////////////////////////////////////////////////////////////////
+// Helper Functions
+
+string StripWhiteSpace(string s)
+{
+    while (s && isspace(s[0]))
+        s = strsub(s, 1);
+    while (s && isspace(s[strlen(s) - 1]))
+        s = strsub(s, 0, strlen(s) - 1);
+    return s;
+}
+
+int isquote(char c)
+{
+    return (c == '"') ? 1 : 0;
+}
+
+string TrimQuotes(string s)
+{
+    while (s && isquote(s[0]))
+        s = strsub(s, 1);
+    while (s && isquote(s[strlen(s) - 1]))
+        s = strsub(s, 0, strlen(s) - 1);
+    return s;
+}
+
+string TrimDNPSuffix(string s)
+{
+    // we have to strip off any (DNP) suffix from the part name
+    int lensuffix = strlen(dnpSuffix);
+    int lenstr    = strlen(s);
+    if (lenstr > lensuffix)
+    {
+        if (strstr(s, dnpSuffix) > 0)
+            s = strsub(s, 0, lenstr - lensuffix);
+    }
+    return s;
+}
+
+int PartSearch(string partname)
+{
+    for (int i=0; i < nPartCount; i++)
+    {
+        if (PartName[i] == partname)
+            return i;
+    }
+    return -1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Part Database Helpers
+
+string DatabaseHeader(void)
+{
+    string s;
+
+    if (Database[0])
+    {
+        string a[];
+        int n = strsplit(a, Database[0], DatabaseSeparator);
+        int i;
+
+        for (i=1; i < n; i++)
+        {
+            s += "\t" + a[i];
+            DatabaseFields[i-1] = a[i];
+        }
+
+        DatabaseFields[i-1] = "";
+    }
+    return s;
+}
+
+string DatabaseKey(int i)
+{
+    return PartNum[i];
+}
+
+string DatabaseLookup(string key, int f)
+{
+    string s;
+    s = lookup(Database, key, DatabaseFields[f], DatabaseSeparator);
+    if (!s || (s == DatabaseFields[f]))
+        s = nullkey;
+    return s;
+}
+
+int ReadDatabase(string fileName)
+{
+    string data;
+    if (fileread(data, fileName) > 0)
+    {
+        DatabaseRecCount = strsplit(Database, data, '\n');
+        DatabaseSeparator = (strchr(Database[0], '\t') > -1) ? '\t' : ';';
+        DatabaseFilePath = fileName;
+        return 1;
+    }
+    return 0;
+}
+
+// Create the list view control data for display to the user.
+
+void GenerateList()
+{
+    int count = 0;
+
+    // NOTE - the function EditPart() assumes col zero of ListView[] contains the
+    // the part id. When the user double clicks in the view list we extract the first
+    // the first col data from ListView[] and use that as the key for edit record lookup.
+    // So, EditPart() must also be modified if we move the 'Part ID' field to another column.
+
+    //ListView[count++] = "Ref\tSheet\tPart ID\tValue\tPackage\tBOM\tMfg Part Num" + DatabaseHeader();
+    ListView[count++] = "Part ID\tValue\tPackage\tBOM\tMfg Part Num" + DatabaseHeader();
+
+    for (int i=0; i < nPartCount; i++)
+    {
+        // append (DNP) suffix on part name if needed
+        string partname;
+        partname = PartName[i];
+        if (PartDNP[i] == 1)
+            partname += dnpSuffix;
+
+        string partnum = PartNum[i];
+        if (!partnum)
+            partnum = "*";
+
+        //sprintf(ListView[count], "%s\t%s\t%s\t%s\t%s\t%s\t%s",
+        //    PartRef[i], PartSheet[i], partname, PartVal[i], PartPkg[i], PartBOM[i], partnum);
+
+        sprintf(ListView[count], "%s\t%s\t%s\t%s\t%s",
+            partname, PartVal[i], PartPkg[i], PartBOM[i], partnum);
+
+        if (Database[0])
+        {
+            string key = DatabaseKey(i);
+
+            for (int f=0; DatabaseFields[f]; f++)
+                ListView[count] += "\t" + DatabaseLookup(key, f);
+
+            ListView[count] += "\t" + key; // hidden field!
+        }
+
+        ++count;
+    }
+}
+
+void LoadDatabase(void)
+{
+    string fileName = dlgFileOpen("Load database file", ConfigFilePath, "Database files (*.txt *.csv);;All files (*)");
+
+    if (fileName)
+    {
+        // write last path in file to remember for next start
+        output(filedir(argv[0])+ConfigFileName, "wt") printf("%s", filedir(fileName));
+
+        if (ReadDatabase(fileName))
+        {
+            GenerateList();
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Here we're checking for a specific device names that have no associated
+// package that we want added to the BOM listing also. We don't add any
+// devices without packages to listing except those listed here.
+
+int IsKnownDevice(string devname)
+{
+    string names = "BOM-ENTRY:JUMPER:JUMP-A:JUMP-B:JUMP-Q";
+    string a[];
+    int n = strsplit(a, names, ':');
+    int i;
+    for (i=0; i < n; i++)
+    {
+        if (devname == a[i])
+            return 1;
+    }
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Collect all part number attribute and other data from the schematic
+
+int CollectPartData()
+{
+    nPartCount = 0;
+
+    schematic(SCH)
+    {
+        SCH.sheets(S)
+        {
+            S.parts(P)
+            {
+                if ((P.device.package) || IsKnownDevice(P.device.name))
+                {
+                    int dnp = -1;
+                    numeric string partnum;
+
+                    // Save any PART attribute
+                    if (!P.attribute["PARTNO"])
+                        PartNum[nPartCount] = "";
+                    else
+                        PartNum[nPartCount] = P.attribute["PARTNO"];
+
+                    // Save any DNP attribute flag
+                    if (P.attribute["DNP"])
+                    {
+                        string attr = P.attribute["DNP"];
+                        if ((attr == "T") || (attr == "1"))
+                            dnp = 1;
+						else
+						 	dnp = 0;
+                    }
+
+                    // Save any BOM attribute
+                    if (!P.attribute["BOM"])
+                        PartBOM[nPartCount] = "";
+                    else
+                        PartBOM[nPartCount] = P.attribute["BOM"];
+
+                    // Save the SHEET number
+                    sprintf(PartSheet[nPartCount], "%d", S.number);
+
+                    // Save the part NAME and VALUE
+
+                    numeric string ref;
+                    sprintf(ref, "%3d", nPartCount+1);
+
+                    // We have to check to make sure the part has not already been added
+                    // since it's possible a multi-gate part can appear on multiple sheets.
+                    //
+                    // In this case we only need to update the attributes on the first
+                    // instance encountered for the attributes update process.
+
+                    if (lookup(PartName, P.name, 0))
+                        continue;
+
+                    PartRef[nPartCount]  = ref;
+                    PartName[nPartCount] = P.name;
+                    PartVal[nPartCount]  = P.value;
+                    PartPkg[nPartCount]  = (P.device.package) ? P.device.package.name : "*";
+                    PartDNP[nPartCount]  = dnp;
+
+                    ++nPartCount;
+                }
+            }
+        }
+    }
+
+    return nPartCount;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Allow user to edit the part number data for a part
+
+int nPickSel = 0;
+
+numeric string PickView[];
+numeric string PickLine;
+
+numeric string PickPartNum;
+
+int nSelComboBOM = 0;
+string ComboBOM[] = { "(none)", "EXCLUDE", "INCLUDE" };
+
+int nSelComboDNP = 0;
+string ComboDNP[] = { "(none)", "T", "F" };
+
+
+int GetComboBOMIndex(string opt)
+{
+    if (opt == ComboBOM[1])
+        return 1;
+    else if (opt == ComboBOM[2])
+        return 2;
+    return 0;
+}
+
+int GetComboDNPIndex(int opt)
+{
+    if (opt < 0)
+        return 0;
+    else if (opt > 0)
+        return 1;
+    return 2;
+}
+
+string GetDatabaseRecord(int row)
+{
+    string s;
+    string a[];
+
+    int n = strsplit(a, Database[row], DatabaseSeparator);
+    int i;
+
+    for (i=0; i < n; i++)
+        s += a[i] + "\t";
+
+    s = strsub(s, 0, strlen(s) - 1);
+
+    return s;
+}
+
+string GetDatabaseField(int row, int col)
+{
+    int n;
+    string s;
+    string a[];
+    n = strsplit(a, Database[row], DatabaseSeparator);
+    if (col < n)
+        s = a[col];
+    return s;
+}
+
+void OnPickSelChanged()
+{
+    PickPartNum = GetDatabaseField(nPickSel, 0);
+}
+
+void EditPartEntry(string partname)
+{
+    int ndx = PartSearch(partname);
+
+    if (ndx == -1)
+    {
+        dlgMessageBox("Error - part ID not found!", "OK");
+        return;
+    }
+
+    // this call is needed to load the database header fields
+    DatabaseHeader();
+
+    PickPartNum = PartNum[ndx];
+
+    nSelComboBOM = GetComboBOMIndex(PartBOM[ndx]);
+
+    nSelComboDNP = GetComboDNPIndex(PartDNP[ndx]);
+
+    int result;
+
+    if (Database[0])
+    {
+        int i;
+        int count = 0;
+
+        // Fill the pick listview with all of the database records
+        for (i=0; i < DatabaseRecCount; i++)
+            PickView[count++] = GetDatabaseRecord(i);
+
+
+        // Set the list selection to the current part number if possible
+
+        nPickSel = 0;
+
+        for (i=0; i < DatabaseRecCount; i++)
+        {
+            string a[];
+            strsplit(a, Database[i], DatabaseSeparator);
+            if (PickPartNum == a[0])
+            {
+                nPickSel = i;
+                break;
+            }
+        }
+
+        result = dlgDialog("Pick Part")
+        {
+            dlgHBoxLayout dlgSpacing(500);
+            dlgHBoxLayout
+            {
+                dlgVBoxLayout dlgSpacing(300);
+                dlgListView("", PickView, nPickSel)
+                {
+                    if (dlgSelectionChanged())
+                        OnPickSelChanged();
+                    else
+                        dlgAccept();    // double click
+                }
+            }
+            dlgHBoxLayout
+            {
+                dlgLabel("Part Number:");
+                dlgStringEdit(PickPartNum);
+                dlgLabel("BOM:");
+                dlgComboBox(ComboBOM, nSelComboBOM);
+                dlgLabel("DNP:");
+                dlgComboBox(ComboDNP, nSelComboDNP);
+                dlgStretch(1);
+                dlgPushButton("&OK") dlgAccept();
+                dlgPushButton("-Cancel")  dlgReject();
+            }
+        };
+
+        if (result)
+        {
+            PickPartNum = StripWhiteSpace(PickPartNum);
+
+            PartNum[ndx] = PickPartNum;
+
+            if (nSelComboBOM == 0)
+                PartBOM[ndx] = "";
+            else
+                PartBOM[ndx] = ComboBOM[nSelComboBOM];
+
+            if (nSelComboDNP == 0)
+                PartDNP[ndx] = -1;
+            else if (nSelComboDNP == 1)
+                PartDNP[ndx] = 1;
+            else
+                PartDNP[ndx] = 2;
+
+            IsModified = 1;
+
+            GenerateList();
+         }
+    }
+    else
+    {
+        result = dlgDialog("Part Number Manager")
+        {
+            dlgHBoxLayout
+            {
+                dlgGroup("Edit Part Number")
+                {
+                    dlgGridLayout
+                    {
+                        dlgCell(0, 0) dlgLabel("Part Name:");
+                        dlgCell(0, 1) dlgLabel(partname);
+
+                        dlgCell(1, 0) dlgLabel("Part Value:");
+                        dlgCell(1, 1) dlgLabel(PartVal[ndx]);
+
+                        dlgCell(2, 0) dlgLabel("Part Package:");
+                        dlgCell(2, 1) dlgLabel(PartPkg[ndx]);
+
+                        dlgCell(3, 0) dlgLabel("Part Number:");
+                        dlgCell(3, 1) dlgStringEdit(PickPartNum);
+
+                        dlgCell(4, 0) dlgLabel("BOM Flags:");
+                        dlgCell(4, 1) dlgComboBox(ComboBOM, nSelComboBOM);
+                    }
+                }
+                dlgVBoxLayout
+                {
+                    dlgStretch(2);
+                    dlgPushButton("+OK") dlgAccept();
+                    dlgPushButton("-Cancel") dlgReject();
+                }
+            }
+        };
+
+        if (result)
+        {
+            PickPartNum = StripWhiteSpace(PickPartNum);
+
+            PartNum[ndx] = PickPartNum;
+
+            if (nSelComboBOM == 0)
+                PartBOM[ndx] = "";
+            else
+                PartBOM[ndx] = ComboBOM[nSelComboBOM];
+
+            IsModified = 1;
+
+            GenerateList();
+         }
+    }
+}
+
+void EditPart(void)
+{
+    if (nPartCount)
+    {
+        if (nSelected)
+        {
+            // NOTE: THE VIEW COL NUM FOR a[n] MUST CORRESPOND TO THE PART ID
+            string a[];
+            strsplit(a, ListView[nSelected], '\t');
+            // Column zero of ListView[] contains the part-id!
+            string partname = a[0];
+            // we have to strip off any (DNP) suffix from the part name
+            partname = TrimDNPSuffix(partname);
+            EditPartEntry(partname);
+        }
+        else
+        {
+            dlgMessageBox("Please select a list part!");
+        }
+    }
+    else
+    {
+        dlgMessageBox("No Parts Found!");
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Save all the part number attribute data as a script
+
+int WriteScriptData(string fileName)
+{
+    if (!fileName)
+    if (fileext(fileName) != ".scr")
+        fileName += ".scr";
+
+    fileerror();
+
+    output(fileName, "wt")
+    {
+        printf("CHANGE DISPLAY OFF;\n");
+
+        for (int i=0; i < nPartCount; i++)
+        {
+            if (PartNum[i] != "")
+            {
+                printf("EDIT .s%s; ATTRIBUTE '%s' 'PARTNO' '%s';\n",
+                    PartSheet[i], PartName[i], PartNum[i]);
+            }
+
+            if (PartBOM[i] != "")
+            {
+                printf("EDIT .s%s; ATTRIBUTE '%s' 'BOM' '%s';\n",
+                    PartSheet[i], PartName[i], PartBOM[i]);
+            }
+        }
+
+        printf("EDIT .s1;\n");
+    }
+
+    IsModified = 0;
+
+    return !fileerror();
+}
+
+void ApplyScriptData()
+{
+    string fname;
+
+    //if (dlgMessageBox("Exit and apply all attribute updates?", "+&OK", "-Cancel") != 0)
+    //    return;
+
+    schematic(SCH)
+    {
+        fname = filesetext(SCH.name, "_UpdatePartNumAttributes.scr");
+    }
+
+    if (!fname)
+        return;
+
+    if (!WriteScriptData(fname))
+        return;
+
+    string cmd;
+    sprintf(cmd, "SCRIPT '%s';\n", fname);
+    exit(cmd);
+}
+
+int SaveScriptData()
+{
+    if (!nPartCount)
+    {
+        dlgMessageBox("No part data exists!");
+        return 0;
+    }
+
+    string fileName = "";
+
+    schematic(SCH)
+    {
+        fileName = filesetext(SCH.name, "_UpdatePartNumAttributes.scr");
+    }
+
+    fileName = dlgFileSave("Save Script file", fileName, "Script files (*.scr);;All files (*)");
+
+    if (!fileName)
+        return 0;
+
+    if (fileext(fileName) != ".scr")
+        fileName += ".scr";
+
+    return WriteScriptData(fileName);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// This function allows the user to import a TAB delimited text file
+// that contains part ID and manufacturer part number information. The
+// data in the import file must be in the following format:
+//
+//   Part Name           Part Number
+//   R4                  MCR10EZHJ000
+//   R21                 ERA-6YEB101V
+//   R12                 ERA-6YEB391V
+//   "R3, R20"           ERJ-6ENF1001V
+//   R13                 ERJ-6ENF1241V
+//   R1                  ERJ-6ENF2211V
+//   "R5, R7, R10, R25"  ERJ-6ENF4751V
+//
+// Note the first line containing "Part Name" and "Part Number" is the
+// header line. The names in these columns don't really matter but the
+// header and all other data records must have TAB delimiters for the
+// record field delimiters.
+//
+// The "Part Name" fields may contain multiple part name designators, but
+// each part id must be delimited by a comma. If multiple part name designators
+// are contained on a line, it should have quotes around the entire part id
+// names string (default Excel format for tabbed text).
+
+int ImportPartNums()
+{
+    string fileName;
+    string data[];
+    int numlines;
+
+    schematic(SCH)
+    {
+        fileName = filesetext(SCH.name, ".txt");
+    }
+
+    fileName = dlgFileOpen("Import Part Name Numbers", fileName, "Import part number files (*.txt);;All files (*)");
+
+    if (!fileName)
+        return 0;
+
+    if ((numlines = fileread(data, fileName)) > 0)
+    {
+        for (int i=1; i < numlines; i++)
+        {
+            int n;
+            string cols[];
+
+            if ((n = strsplit(cols, data[i], '\t')) == 2)
+            {
+                string partids = TrimQuotes(cols[0]);
+                string partnum = StripWhiteSpace(cols[1]);
+
+                string id[];
+                n = strsplit(id, partids, ',');
+
+                for (int j=0; j < n; j++)
+                {
+                    string partid = StripWhiteSpace(id[j]);
+
+                    int ndx = PartSearch(partid);
+
+                    if (ndx >= 0)
+                        PartNum[ndx] = partnum;
+                }
+            }
+        }
+
+        IsModified = 1;
+
+        GenerateList();
+
+        dlgRedisplay();
+
+        return 1;
+    }
+
+    return 0;
+}
+
+int OkToClose(void)
+{
+    if (IsModified)
+    {
+        int rtn = dlgMessageBox("Part numbers have been added or modified\n\nSave Script?", "+&Yes", "&No", "-Cancel");
+        switch (rtn)
+        {
+        case 0: return SaveScriptData();
+        case 1: break;
+        case 2: return 0;
+        }
+    }
+    return 1;
+}
+
+void DisplayHelp(void)
+{
+    dlgDialog("Part Number Manager - Help")
+    {
+        dlgHBoxLayout dlgSpacing(650);
+        dlgHBoxLayout
+        {
+            dlgVBoxLayout dlgSpacing(300);
+            dlgTextView(HelpTextEN);
+        }
+        dlgHBoxLayout
+        {
+            dlgStretch(1);
+            dlgPushButton("-Close") dlgReject();
+        }
+    };
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Script Entry Point
+
+if (schematic)
+{
+    // load the last file open directory path saved
+    string rf[];
+    int nrf = fileglob(rf, filedir(argv[0])+ConfigFileName);
+    if (nrf)
+        nrf = fileread(ConfigFilePath, rf[0]);
+
+    DatabaseFilePath = ConfigFilePath;
+
+    schematic(SCH)
+    {
+        // Check global attributes for DATABASE name to auto-load.
+        // If the name begins with a period, then treat the path
+        // as relative to the base schematic project directory.
+        // Otherwise, assume the global name specfies a full path.
+
+        SCH.attributes(A)
+        {
+            if (A.name == "DATABASE")
+            {
+                string fname = A.value;
+                if (fname[0] == '.')
+                {
+                    string tmp = fname;
+                    for (int i=0; i < strlen(tmp)-2; i++)
+                        fname[i] = tmp[i+2];
+                    fname[i] = 0;
+                    fname = filedir(SCH.name) + fname;
+                }
+                ReadDatabase(fname);
+                break;
+            }
+        }
+
+        CollectPartData();
+
+        GenerateList();
+
+        dlgDialog("Part Number Manager - v" + strVersion)
+        {
+            dlgHBoxLayout
+            {
+                dlgLabel("Database:");
+                dlgLabel(DatabaseFilePath, 1);
+                dlgStretch(1);
+                dlgPushButton("L&oad") LoadDatabase();
+                dlgPushButton("H&elp") DisplayHelp();
+            }
+
+            dlgHBoxLayout dlgSpacing(600);
+            dlgListView("", ListView, nSelected) EditPart();
+
+            dlgHBoxLayout
+            {
+                dlgStretch(1);
+                dlgPushButton("I&mport") ImportPartNums();
+                dlgPushButton("&Save Script")   SaveScriptData();
+                dlgPushButton("&Apply All")  ApplyScriptData();
+                dlgPushButton("-Close")  if (OkToClose()) dlgAccept();
+            }
+        };
+    }
+}
+else
+{
+    dlgMessageBox("Start this ULP in Schematic!", "OK");
+}
+
+// End-Of-File

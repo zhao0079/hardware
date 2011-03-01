@@ -1,0 +1,56 @@
+Mfg Part Num,Mfg Name,VID,Vendor Part Num,Description,Qty 1,Qty 2,Qty 3,Customer Ref,Price Qty 1,Price Qty 2,Price Qty 3,Vendor Reel Part Num,Vendor Link,Datasheet Link,Qty1,Qty2,Qty3,Part References
+CC0402ZRY5V7BB104,Yageo,DK,311-1047-1-ND,CAP .10UF 16V CERAMIC Y5V 0402,10,100,500,*,0.01100,0.00650,0.00376,311-1047-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1047-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,2,2,2,C1/C2
+*** ERROR - PART 'CC0402JRNP09BN100' NOT FOUND FOR: C3/C4
+CC0402ZRY5V7BB104,Yageo,DK,311-1047-1-ND,CAP .10UF 16V CERAMIC Y5V 0402,10,100,500,*,0.01100,0.00650,0.00376,311-1047-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1047-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,1,1,1,C5
+F931A106MAA,Nichicon,DK,493-2351-1-ND,CAP TANTALUM 10UF 10V 20% SMD,10,100,250,*,0.34900,0.21000,0.15752,493-2351-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=493-2351-1-ND,http://products.nichicon.co.jp/en/pdf/XJA039/e-f93.pdf,1,1,1,C6
+CC0402ZRY5V7BB104,Yageo,DK,311-1047-1-ND,CAP .10UF 16V CERAMIC Y5V 0402,10,100,500,*,0.01100,0.00650,0.00376,311-1047-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1047-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,4,4,4,C7/C8/C9/C10
+C1608Y5V1C225Z,TDK Corporation,DK,445-3451-1-ND,CAP CER 2.2UF 16V Y5V 0603,10,100,500,*,0.08800,0.05200,0.03000,445-3451-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=445-3451-1-ND,http://www.tdk.com/pdf/general_A11.pdf,2,2,2,C11/C12
+F931A106MAA,Nichicon,DK,493-2351-1-ND,CAP TANTALUM 10UF 10V 20% SMD,10,100,250,*,0.34900,0.21000,0.15752,493-2351-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=493-2351-1-ND,http://products.nichicon.co.jp/en/pdf/XJA039/e-f93.pdf,1,1,1,C13
+CC0402ZRY5V7BB104,Yageo,DK,311-1047-1-ND,CAP .10UF 16V CERAMIC Y5V 0402,10,100,500,*,0.01100,0.00650,0.00376,311-1047-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1047-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,2,2,2,C14/C15
+CC0402KRX7R9BB471,Yageo,DK,311-1028-1-ND,CAP 470PF 50V CERAMIC X7R 0402,10,100,500,*,0.01100,0.00670,0.00386,311-1028-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1028-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,1,1,1,C16
+CC0402ZRY5V7BB104,Yageo,DK,311-1047-1-ND,CAP .10UF 16V CERAMIC Y5V 0402,10,100,500,*,0.01100,0.00650,0.00376,311-1047-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1047-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,6,6,6,C17/C18/C19/C20/C21/C22
+C1608Y5V0J475Z,TDK Corporation,DK,445-3449-1-ND,CAP CER 4.7UF 6.3V Y5V 0603,10,100,500,*,0.12100,0.07150,0.04126,445-3449-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=445-3449-1-ND,http://www.tdk.com/pdf/general_A11.pdf,1,1,1,C23
+C1005Y5V1C224Z,TDK Corporation,DK,445-3444-1-ND,CAP CER .22UF 16V Y5V 0402,10,100,500,*,0.03000,0.01760,0.01012,445-3444-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=445-3444-1-ND,http://www.tdk.com/pdf/general_A11.pdf,1,1,1,C24
+CC0402KRX7R7BB103,Yageo,DK,311-1042-1-ND,CAP 10000PF 16V CERAMIC X7R 0402,10,100,500,*,0.01100,0.00670,0.00386,311-1042-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=311-1042-1-ND,http://media.digikey.com/pdf/Data%20Sheets/Yageo%20PDFs/MLCC%20ordering%20code.pdf,1,1,1,C25
+GRM155F51C474ZA01D,Murata Electronics,DK,490-3274-1-ND,CAP CER .47UF 16V Y5V 0402,10,100,500,*,0.04400,0.02600,0.01500,490-3274-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=490-3274-1-ND,http://search.murata.co.jp/Ceramy/image/img/PDF/ENG/GRM155F51C474ZA01.pdf,1,1,1,C26
+MSS1P4-M3/89A,Vishay,DK,MSS1P4-M3/89AGICT-ND,DIODE SCHOTTKY 1A 40V MICROSMP,10,100,250,*,0.32600,0.19190,0.13576,MSS1P4-M3/89AGIDKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=MSS1P4-M3/89AGICT-ND,http://www.vishay.com/docs/89019/mss1p4.pdf,1,1,1,D1
+MF-FSMF050X-2,Bourns Inc.,DK,MF-FSMF050X-2CT-ND,FUSE PTC RESET 500MA SMD 0603,10,100,500,*,0.36000,0.33000,0.31200,MF-FSMF050X-2DKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=MF-FSMF050X-2CT-ND,http://www.bourns.com/data/global/pdfs/mffsmf.pdf,1,1,1,F1
+MF-FSMF020X-2,Bourns Inc.,DK,MF-FSMF020X-2CT-ND,FUSE PTC RESET 200MA SMD 0603,10,100,500,*,0.36000,0.33000,0.31200,MF-FSMF020X-2DKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=MF-FSMF020X-2CT-ND,http://www.bourns.com/data/global/pdfs/mffsmf.pdf,1,1,1,F2
+53261-15,Molex Inc,DK,WM7632CT-ND,CONN HEADER 15POS 1.25MM R/A SMD,10,50,100,*,2.19900,1.89920,1.69930,WM7632DKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=WM7632CT-ND,http://www.molex.com/pdm_docs/sd/532611571_sd.pdf,1,1,1,J1
+953230-2000-AR-PR,3M,DK,3M9272CT-ND,CONN SOCKET 30POS 2MM VERT SMD,1,100,*,*,3.22,2.449,*,*,*,*,1,1,1,J2
+953230-2000-AR-PR,3M,DK,3M9272CT-ND,CONN SOCKET 30POS 2MM VERT SMD,1,100,*,*,3.22,2.449,*,*,*,*,1,1,1,J3
+BM06B-SRSS-TB,JST,DK,455-1792-1-ND,CONN HEADER SH 6POS TOP 1MM TIN,10,100,500,*,0.66000,0.55040,0.44030,455-1792-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=455-1792-1-ND,http://www.jst-mfg.com/product/pdf/eng/eSH.pdf,1,1,1,J4
+47346-0001,Molex Inc,DK,WM17141CT-ND,CONN RCPT 5POS MICRO USB R/A,10,50,250,*,0.79300,0.66120,0.54992,WM17141DKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=WM17141DKR-ND,http://www.molex.com/pdm_docs/sd/473460001_sd.pdf,1,1,1,J5
+M50-3900542,Harwin Inc,DK,952-1395-ND,CONN HDR 1.27MM R/A AU 10POS,10,50,100,*,1.24200,1.03500,0.92000,*,http://search.digikey.com/scripts/DkSearch/dksus.dll?vendor=0&keywords=M50-3900542,http://www.harwin.com/include/downloads/pdfs/2010PAGE95.PDF,1,1,1,J6
+BKP1005HS121-T,Taiyo Yuden,DK,587-1921-1-ND,FERRITE BEAD 120 OHM 0402,10,100,500,*,0.20000,0.08000,0.04100,587-1921-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=587-1921-1-ND,http://www.yuden.co.jp/us/product/pdf/ebkp_e.pdf,11,11,11,L1/L2/L3/L4/L5/L6/L7/L8/L9/L10/L11
+LTST-C193KGKT-5A,Lite-On Inc,DK,160-1828-1-ND,LED GREEN RECT CLEAR 0603,10,100,250,*,0.33300,0.19610,0.13876,160-1828-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=160-1828-1-ND,http://optoelectronics.liteon.com/en-us/api/DwonloadFileHandler.ashx?txtSpecNo=DS22-2007-0094&txtPartNo=LTST-C193KGKT-5A,1,1,1,LED1
+LNJ437W84RA,Panasonic - SSG,DK,LNJ437W84RACT-ND,LED AMBER HIGH BRIGHT ESS SMD,1,25,100,*,0.53000,0.31000,0.25000,LNJ437W84RADKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=LNJ437W84RACT-ND,http://industrial.panasonic.com/www-cgi/jvcr13pz.cgi?E+SC+4+ATA7003+LNJ437W84RA+8+WW,1,1,1,LED2
+LNJ937W8CRA,Panasonic - SSG,DK,LNJ937W8CRACT-ND,LED BLUE HIGH BRIGHT ESS SMD,1,25,100,*,0.48000,0.31680,0.26000,LNJ937W8CRADKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=LNJ937W8CRACT-ND,http://industrial.panasonic.com/www-cgi/jvcr13pz.cgi?E+SC+4+ATA7003+LNJ937W8CRA+8+WW,1,1,1,LED3
+*** ERROR - PART '*' NOT FOUND FOR: R1/R2
+*** ERROR - PART '*' NOT FOUND FOR: R3/R4
+*** ERROR - PART 'RMCF0402FT1K00' NOT FOUND FOR: R5
+*** ERROR - PART '*' NOT FOUND FOR: R6
+*** ERROR - PART '*' NOT FOUND FOR: R7
+*** ERROR - PART '*' NOT FOUND FOR: R8
+*** ERROR - PART '*' NOT FOUND FOR: R9
+*** ERROR - PART 'RMCF0402JT1K00' NOT FOUND FOR: R10
+*** ERROR - PART 'RC0402FR-0739K2L' NOT FOUND FOR: R11
+*** ERROR - PART 'RMCF0402FT1K00' NOT FOUND FOR: R12
+*** ERROR - PART '*' NOT FOUND FOR: R13
+*** ERROR - PART '*' NOT FOUND FOR: R14
+*** ERROR - PART '*' NOT FOUND FOR: R15
+*** ERROR - PART 'RMCF0402FT1K00' NOT FOUND FOR: R16/R17/R18
+*** ERROR - PART '*' NOT FOUND FOR: R19/R20
+*** ERROR - PART 'RMCF0402FT1K00' NOT FOUND FOR: R21
+EVQP7J01K,Panasonic - ECG,DK,P12278SCT-ND,SWITCH LT 3.5MMX2.9MM 160GF SMD,10,100,500,*,0.73400,0.61630,0.52826,P12278SDKR-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=P12278SCT-ND,http://industrial.panasonic.com/www-data/pdf/ATK0000/ATK0000CE20.pdf,1,1,1,S1
+STM32F205,STMicroelectronics,DK,*,*,10,*,*,*,13.000,*,*,*,*,*,1,1,1,U1
+TXB0102DCUR,Texas Instruments,DK,296-22862-1-ND,IC VOLT-LVL TRANSL BI-DIR 8-US8,1,25,100,*,1.48000,1.17000,1.05300,296-22862-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=296-22862-1-ND,http://focus.ti.com/lit/ds/symlink/txb0102.pdf,3,3,3,U2/U3/U4
+SN74LVC2T45,Texas Instruments,DK,296-17014-1-ND,Translator, Bidirectional, 3-State, 2bits,1,25,100,*,0.79000,0.61200,0.54000,296-17014-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=296-17014-1-ND,http://focus.ti.com/lit/ds/symlink/sn74lvc2t45.pdf,1,1,1,U5
+LD1117AS33,STMicroelectronics,DK,497-1228-1-ND,IC REG LDO 3.3V 1.2A SOT-223,10,100,250,*,0.84000,0.66300,0.57460,497-1228-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=497-1228-1-ND,http://www.st.com/internet/com/TECHNICAL_RESOURCES/TECHNICAL_LITERATURE/DATASHEET/CD00002116.pdf,1,1,1,U6
+MIC5207-3.3YM5,Micrel Inc,DK,576-1267-1-ND,IC REG LDO 180MA 3.3V SOT23-5,1,100,250,*,1.02000,0.85000,0.51000,576-1267-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=576-1267-1-ND,http://www.micrel.com/_PDF/mic5207.pdf,1,1,1,U7
+24FC128-I/MS,Microchip,DK,24FC128-I/MS-ND,IC EEPROM 128KBIT 1MHZ 8MSOP,10,25,100,*,0.84000,0.60000,0.58000,*,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=24FC128-I/MS-ND,http://ww1.microchip.com/downloads/en/DeviceDoc/21191s.pdf,1,1,1,U8
+LIS331DLH,STMicroelectronics,DK,497-10397-1-ND,ACCELEROMETER MEMS 3AXIS 16-LGA,10,100,250,*,8.31600,6.93000,6.23700,497-10397-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=497-10397-1-ND,http://www.st.com/internet/com/TECHNICAL_RESOURCES/TECHNICAL_LITERATURE/DATASHEET/CD00213470.pdf,1,1,1,U9
+BMP0805,Bosch Sensortec,DK,828-1005-1-ND,DIGITAL BAROMETRIC PRESSURE SNSR,10,100,250,*,8.79000,7.32500,5.56700,828-1005-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=828-1005-1-ND,http://www.bosch-sensortec.com/content/language1/downloads/BST-BMP085-DS000-05.pdf,1,1,1,U10
+HMC5843,HMC5843,DK,342-1071-1-ND,SENSOR MAGNETIC 3 AXIS 20-LCC,1,100,500,*,20,17,15,342-1071-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=342-1071-1-ND,http://www.sparkfun.com/datasheets/Sensors/Magneto/HMC5843.pdf,1,1,1,U11
+L3G4200DH,ST Gyro 3-Axis,ME,511-L3G4200D,Gyroscopes Mems Sensor 3-Axis 2.4 to 3.6 V,10,100,250,*,13.85,12.41,9.88,*,http://at.mouser.com/ProductDetail/STMicroelectronics/L3G4200D/?qs=sGAEpiMZZMtlZAfbtrLey%252by4mKX%2fvdEL,http://www.st.com/stonline/products/literature/ds/17116.pdf,1,1,1,U12
+7M-16.000MEEQ-T,7M,DK,887-1319-1-ND,CRYSTAL 16.000 MHZ 10PF SMD,10,50,100,*,1.46300,1.28260,1.01250,887-1319-6-ND,http://search.digikey.com/scripts/DkSearch/dksus.dll?Detail&name=887-1319-1-ND,http://www.txccrystal.com/images/pdf/7m-accuracy.pdf,1,1,1,X1

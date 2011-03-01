@@ -1,0 +1,17 @@
+*|2 *** ERROR : R1/R2
+*|2 *** ERROR : R3/R4
+*|1 *** ERROR : R6
+*|1 *** ERROR : R7
+*|1 *** ERROR : R8
+*|1 *** ERROR : R9
+*|1 *** ERROR : R13
+*|1 *** ERROR : R14
+*|1 *** ERROR : R15
+*|2 *** ERROR : R19/R20
+*|2 *** ERROR : C3/C4
+511-L3G4200D|10
+*|1 *** ERROR : R11
+*|1 *** ERROR : R5
+*|1 *** ERROR : R12
+*|4 *** ERROR : R16/R17/R18/R21
+*|1 *** ERROR : R10
