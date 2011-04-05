@@ -1,0 +1,11 @@
+
+
+This file contains the part number of the mating connectors for the different boards.
+
+PX2 FMU:
+
+15-pos PicoBlade Crimp Assembly:
+
+	Man. Part Number		Digi-Key		Price/10
+1	51021-1500			WM17002-ND		0.98000
+15	50079-8000			WM1142CT-ND		0.05250
