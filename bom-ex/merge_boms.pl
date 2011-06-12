@@ -12,7 +12,12 @@ my %boards;            ## Multiples of boards
 use Dumpvalue;
 my $dumper = new Dumpvalue;
 
+my @inputfiles = @ARGV;
+
 ########## SETTINGS ############
+
+## BOM-ex part database
+my $partsdb = "../pixhawk2/PIXHAWK2-PARTS-DATABASE.csv";
 
 ## FILE FORMATS
 
@@ -83,26 +88,29 @@ $year+1900,$mon+1,$mday,$hour,$min);
 
 ##y $s = "out.csv"; ##$ARGV[2];
 
-my $partsdb = "PIXHAWK2-PARTS-DATABASE.csv";
+print "\n-----------------------------------\n\n";
+print "Merging files:\n\n";
 
-my $output = "\nMerging files ";
+my $output = "";
 foreach (@ARGV) {
-  $output = "$output $_";
+  $output = "$output\n + $_";
 }
 
-print "$output\n\n-----------------------------------\n\n";
-print "Combined file contains lines:\n\n";
+print "$output\n\nUsing DATABASE: $partsdb\n\n-----------------------------------\n\n";
+print "Please enter desired board / BOM quantities:\n\n";
 
 unless (@ARGV) {
   die "Could not read all files. Usage: perl scriptname.pl <file1> <file2> <filen>\n";
 }
 open MARGIN, ">", $s or die "Please close $s file and run again: $!";
 
+print "\n";
+
 foreach (@ARGV) {
   open IN, "<", $_ or die "File $_ not found: $!";
   
   ## Request multiple of this file from user
-  print "\nEnter the number of boards for BOM: $_ \t";
+  print "Enter the number of boards for BOM: $_ \n [Number]:\t";
   chomp(my $q = <STDIN>);
   ## Store the requested number of boards
   $boards{$_} = $q;
@@ -131,7 +139,7 @@ foreach (@ARGV) {
 
 ## Quantity optimization based on database file
 ## Load database
-open (DB, $partsdb) or die "File $_ not found: $!";
+open (DB, $partsdb) or die "DATABASE file $_ not found: $!";
   my $first = 1;
 while (<DB>) {
      if ($first eq 1) {
@@ -148,6 +156,9 @@ while (<DB>) {
 }
 close DB or die "Can't close input file: $!";
 
+print "\n\n-----------------------------------\n\n";
+print "Auto-adjusting quantities to minimize costs:\n\n";
+
 ## Adjust quantities
 
 foreach my $ip (keys %count) {
@@ -157,35 +168,68 @@ foreach my $ip (keys %count) {
   
   ## Replace description
   $count{$ip}[3] = $dbparts{$ip}[4];
-
+  
+  ## Check if prices and quantities are numbers
+  # /^(\d+\.?\d*|\.\d+)$/
+  
   ## First check if it would be cheaper to get a lot of parts (250-500 typically)
-  if (($quantity * $dbparts{$ip}[$p2col]) >= $dbparts{$ip}[$q3col] * $dbparts{$ip}[$p3col]) {
-  	$count{$ip}[$quantity_col] = $dbparts{$ip}[$q3col];
-  	$prices{ip} = $dbparts{$ip}[$p3col];
-  	print "$count{$ip}[$key_col]: Replacing quantity of $quantity with cheaper quantity $dbparts{$ip}[$q3col]\n";
+  
+  if (
+  (exists $dbparts{$ip}[$p2col]) && (exists $dbparts{$ip}[$q3col]) && (exists $dbparts{$ip}[$p3col])
+  && ($dbparts{$ip}[$p2col] =~ /^(\d+\.?\d*|\.\d+)$/) && ($dbparts{$ip}[$q3col] =~ /^(\d+\.?\d*|\.\d+)$/) && ($dbparts{$ip}[$p3col] =~ /^(\d+\.?\d*|\.\d+)$/)
+  && (($quantity * $dbparts{$ip}[$p2col]) >= $dbparts{$ip}[$q3col] * $dbparts{$ip}[$p3col])) {
+
+  	if ($count{$ip}[$quantity_col] < $count{$ip}[$quantity_col]) {
+  	  $count{$ip}[$quantity_col] = $dbparts{$ip}[$q3col];
+  	  print "$count{$ip}[$key_col]: Replacing quantity of $quantity with cheaper quantity $dbparts{$ip}[$q3col]\n";
+  	} else {
+  	  print"$count{$ip}[$key_col]: Price is already optimal, not adjusting quantity\n";
+  	}
+  	$prices{$ip} = $dbparts{$ip}[$p3col];
   }
   ## Then check if it would be cheaper getting some (50-100)
-  else if (($quantity * $dbparts{$ip}[$p1col]) >= $dbparts{$ip}[$q2col] * $dbparts{$ip}[$p2col]) {
-  	$count{$ip}[$quantity_col] = $dbparts{$ip}[$q2col];
-  	$prices{ip} = $dbparts{$ip}[$p2col];
-  	print "$count{$ip}[$key_col]: Replacing quantity of $quantity with cheaper quantity $dbparts{$ip}[$q2col]\n";
-  }
-  ## Then check if we should at least get 10 instead of 1
-  else if (($quantity * $dbparts{$ip}[$p1col]) < $moc_price*$quantity) {
-    ## Fill with multiples of moc
-    # The operation below is equivalent to ceil(number)
-    # it will miserably fail at quantities of around one million
-    # or more. But any user ordering one million parts from Digi-Key
-    # or Mouser and not directly from the manufacturer is a fail on its own, so this is safe.
-    my $newquantity = (int($quantity / $moc + 0.999999999999))*$moc;
-  	$count{$ip}[$quantity_col] = $newquantity;
-  	$prices{ip} = $dbparts{$ip}[$p1col];
-  	print "$count{$ip}[$key_col]: Replacing quantity of $quantity for $dbparts{$ip}[$p1col] with minimum order quantity of $newquantity\n";
-  }
   else {
-    $prices{ip} = $dbparts{$ip}[$p1col];
+    if (
+    (exists $dbparts{$ip}[$p1col]) && (exists $dbparts{$ip}[$q2col]) && (exists $dbparts{$ip}[$p2col])
+    && ($dbparts{$ip}[$p1col] =~ /^(\d+\.?\d*|\.\d+)$/) && ($dbparts{$ip}[$q2col] =~ /^(\d+\.?\d*|\.\d+)$/) && ($dbparts{$ip}[$p2col] =~ /^(\d+\.?\d*|\.\d+)$/)
+    && (($quantity * $dbparts{$ip}[$p1col]) >= $dbparts{$ip}[$q2col] * $dbparts{$ip}[$p2col])) {
+  	  if ($count{$ip}[$quantity_col] < $dbparts{$ip}[$q2col]) {
+  	    $count{$ip}[$quantity_col] = $dbparts{$ip}[$q2col];
+  	    print "$count{$ip}[$key_col]: Replacing quantity of $quantity with cheaper quantity $count{$ip}[$quantity_col]\n";
+  	  }
+  	  $prices{$ip} = $dbparts{$ip}[$p2col];
+    }
+    ## Then check if we should at least get 10 instead of 1
+    else {
+      if (exists $dbparts{$ip}[$p1col]) {
+      if ($dbparts{$ip}[$p1col] =~ /^(\d+\.?\d*|\.\d+)$/) {
+      if (($quantity * $dbparts{$ip}[$p1col]) < $moc_price*$quantity) {
+        ## Fill with multiples of moc
+        # The operation below is equivalent to ceil(number)
+        # it will miserably fail at quantities of around one million
+        # or more. But any user ordering one million parts from Digi-Key
+        # or Mouser and not directly from the manufacturer is a fail on its own, so this is safe.
+        my $newquantity = (int($quantity / $moc + 0.999999999999))*$moc;
+  	    $count{$ip}[$quantity_col] = $newquantity;
+  	    $prices{$ip} = $dbparts{$ip}[$p1col];
+  	    if ($quantity != $newquantity) {
+  	      print "$count{$ip}[$key_col]: Replacing quantity of $quantity for \$ $dbparts{$ip}[$p1col]/piece with minimum order quantity of $newquantity\n";
+        }
+      }
+      else {
+        $prices{$ip} = $dbparts{$ip}[$p1col];
+      }
+      } else {
+        print "\n\nWARNING: Price column 1 missing - there is no valid price for the part $ip\n\n";
+      }
+      } else {
+        print "\n\nWARNING: Price column 1 does contain an invalid number - there is no valid price for the part $ip\n\n";
+      }
+    }
   }
 }
+
+##$dumper->dumpValue(\\%prices);
 
 print "\n\nFinal order list:\n----------------------------\n\n";
 
@@ -201,26 +245,45 @@ foreach my $ip (sort keys %count) { ## {$count{$a}[$key_col] <=> $count{$b}[$key
 }
 close MARGIN;
 
+print "\n\nCOST REPORT\n=============================================================\n\n";
+
+my $total_costs = 0;
+
 ## Calculate the per-BOM/board price and output it
-foreach (@ARGV) {
-  open IN, "<", $_ or die "File $_ not found: $!";
+foreach (@inputfiles) {
+  open PR, "<", $_ or die "File \"$_\" not found: $!";
+  print "Costs for \"$_\"..\n";
   my $first = 1;
   my $sum = 0;
-  while (<IN>) {
+  my $board = $_;
+  
+  while (<PR>) {
      ##print MARGIN;
      if ($first eq 1) {
      	$first = 0;
      }
      else {
-     my @splitline = split($filesplitchar);
-     $sum += $splitline[4]*$prices{$splitline[0]};
+       # Calculate the price per board
+       # using the current quantities
+       my @splitline = split($filesplitchar);
+       #$dumper->dumpValue(\\@splitline);
+       if (exists $splitline[0] && exists $prices{$splitline[0]}) {
+         if (exists $splitline[4]) {
+           $sum += $splitline[4]*$prices{$splitline[0]};
+         }
+       } else {
+         print "WARNING: No price found for $splitline[0]\n"
+       }
      }
-     
   }
-  close IN or die "Can't close input file: $!";
-  ## Output costs of this board
-  print "Total costs for $_: $sum";
+    ## Output costs of this board
+  print "TOTAL:\t\$ $sum per board\n\n-------------------------------------------------------------\n";
+  $total_costs += $sum*$boards{$board};
   
+  close PR or die "Can't close input file: $!";
 }
 
-print "\nFile has Created in $dir/$s\n"; 
+print "\n=============================================================\n";
+print "Total sum for this order: \$ $total_costs\n=============================================================\n\n";
+
+print "\nOUTPUT file has been created: $dir/$s\n\nPlease use the output file as input to the Digi-Key website.\n"; 
